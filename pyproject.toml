@@ -7,10 +7,13 @@ authors = [
     { name = "k-mohamedtelmidy-ece", email = "khaledmohamedtelmidy@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "faker>=40.39.0",
+]
 
 [project.scripts]
-lab1-bigdata-khaled-grp6 = "lab1_bigdata_khaled_grp6:main"
+dataset-users = "lab1_bigdata_khaled_grp6.dataset_users:main"
+dataset-orders = "lab1_bigdata_khaled_grp6.dataset_orders:main"
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]
