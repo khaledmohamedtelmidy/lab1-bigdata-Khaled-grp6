@@ -1,0 +1,70 @@
+===== Exercice 1 : table partitionnee par mois =====
+----- Fichiers : non partitionnee -----
+ files  records
+     1       50
+----- Fichiers : partitionnee -----
+ files  records
+     4       50
+----- Partitions -----
+         partition  record_count  file_count
+(month_month: 600)            17           1
+(month_month: 601)            10           1
+(month_month: 602)            13           1
+(month_month: 603)            10           1
+----- EXPLAIN ANALYZE filtre 1 mois : orders_by_state_month -----
+    CPU: 5.73ms, Scheduled: 5.89ms, Blocked 4.33s (Input: 2.83s, Output: 0.00ns), Input: 1 row (9B); per task: avg.: 1.00 std.dev.: 0.00, Output: 1 row (9B)
+    CPU: 32.87ms, Scheduled: 307.03ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 50 rows (1.06kB); per task: avg.: 50.00 std.dev.: 0.00, Output: 1 
+    └─ ScanFilterProject[table = lakehouse:gold.orders_by_state_month$data@6142089629286867383, filterPredicate = (month = timestamp(6) with time zone '2020-01-
+           Input: 50 rows (1.06kB), Filtered: 66.00%, Physical input: 1.34kB, Physical input time: 24.63us, Splits: 1, Splits generation wait time: 461.07ms
+----- EXPLAIN ANALYZE filtre 1 mois : orders_by_state_month_part -----
+    CPU: 5.52ms, Scheduled: 5.70ms, Blocked 2.09s (Input: 1.39s, Output: 0.00ns), Input: 1 row (9B); per task: avg.: 1.00 std.dev.: 0.00, Output: 1 row (9B)
+    CPU: 34.45ms, Scheduled: 223.62ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 17 rows (374B); per task: avg.: 17.00 std.dev.: 0.00, Output: 1 ro
+    └─ ScanFilterProject[table = lakehouse:gold.orders_by_state_month_part$data@7651192800510614985, filterPredicate = (month = timestamp(6) with time zone '202
+           Input: 17 rows (374B), Filtered: 0.00%, Physical input: 1.04kB, Physical input time: 17.32us, Splits: 1, Splits generation wait time: 277.33ms
+===== Exercice 2 : cohortes par decennie de naissance =====
+----- gold.cohorts -----
+ birth_decade  users  orders  avg_units_per_order
+         1910      1      47                 3.19
+         1930      5     199                 3.13
+         1940      4     275                 3.07
+         1950      6     340                 3.01
+         1960      8     433                 3.02
+         1970      5     369                 2.99
+         1980      2      81                 2.79
+         1990      5     402                 3.07
+         2000      5     171                 2.98
+         2010      4     227                 3.09
+         2020      5     288                 3.12
+===== Exercice 3 : INSERT silver + MERGE gold + time travel =====
+Commande ajoutee : d8997c99-c844-4617-95b4-082a0a03dbb4
+----- Snapshots gold apres MERGE -----
+        snapshot_id                  committed_at operation
+6142089629286867383 2026-11-04 21:22:52.502+00:00    append
+5888755408045425379 2026-11-04 21:30:44.846+00:00 overwrite
+----- Avant (FOR VERSION AS OF) vs apres -----
+ etat  rows_  units
+avant     50   8626
+apres     51   8633
+----- Controle silver -----
+ silver_units
+         8633
+===== Exercice 4 : optimize top_products =====
+----- Snapshots avant -----
+        snapshot_id                  committed_at operation
+4997647913246576239 2026-11-04 21:22:58.297+00:00    append
+4713891378024981654 2026-11-04 21:23:18.523+00:00    delete
+3801996950430947997 2026-11-04 21:23:21.863+00:00    append
+----- Fichiers avant -----
+ files  records  bytes
+     1        6    795
+----- Snapshots apres -----
+        snapshot_id                  committed_at operation
+4997647913246576239 2026-11-04 21:22:58.297+00:00    append
+4713891378024981654 2026-11-04 21:23:18.523+00:00    delete
+3801996950430947997 2026-11-04 21:23:21.863+00:00    append
+----- Fichiers apres -----
+ files  records  bytes
+     1        6    795
+----- Exercice 5 (cote Trino) : lignes de orders_by_state_month -----
+ rows_  units
+    51   8633

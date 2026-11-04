@@ -1,0 +1,23 @@
+== Acces S3
+2026-09-28 08:46:46     331568 orders.csv
+2026-09-28 08:46:44       7351 users.csv
+== Credentials Polaris
+== Secrets et configmap
+secret/trino-polaris-oauth created
+secret/polaris-s3 unchanged
+configmap/trino-polaris-config created
+== Deploiement Helm (2-3 min)
+"trino" has been added to your repositories
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "trino" chart repository
+...Successfully got an update from the "polaris" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "trino" chart repository
+...Successfully got an update from the "polaris" chart repository
+Update Complete. ⎈Happy Helming!⎈
+Saving 1 charts
+Downloading trino from repo https://trinodb.github.io/charts
+Deleting outdated charts
+Release "trino" does not exist. Installing it now.
+Error: context deadline exceeded

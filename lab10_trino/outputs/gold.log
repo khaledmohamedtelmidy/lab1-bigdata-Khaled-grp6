@@ -1,0 +1,180 @@
+----- Version -----
+version
+    480
+----- Catalogues -----
+  Catalog
+lakehouse
+   system
+    tpcds
+     tpch
+----- Schemas de lakehouse -----
+            Schema
+information_schema
+            silver
+            system
+----- Tables silver -----
+ Table
+orders
+ users
+----- DESCRIBE silver.orders -----
+    Column                        Type Extra Comment
+  order_id                     varchar              
+   user_id                     varchar              
+ordered_at timestamp(6) with time zone              
+  quantity                     integer              
+   product                     varchar              
+    source                     varchar              
+----- DESCRIBE silver.users -----
+   Column    Type Extra Comment
+  user_id varchar              
+ username varchar              
+     name varchar              
+      sex varchar              
+    email varchar              
+birthdate    date              
+   street varchar              
+     city varchar              
+    state varchar              
+ zip_code varchar              
+----- Comptages silver -----
+ orders  users
+   2832     50
+----- Users par state (parsing d'adresse) -----
+state  users  missing_city
+   AE      3             3
+   FM      3             0
+   AP      2             2
+   DE      2             0
+   HI      2             0
+   NJ      2             0
+   NM      2             0
+   PA      2             0
+   TX      2             0
+   VI      2             0
+----- Commandes orphelines -----
+ orphan_orders
+             0
+----- orders$snapshots -----
+       snapshot_id                  committed_at operation
+120723834449077482 2026-11-04 15:00:44.599+00:00    append
+----- orders$files -----
+                                                                                                                file_path file_format  record_count  file_size_in_bytes
+s3a://user-k-mohamedtelmidy-ece/warehouse/silver/orders/data/00000-1-eeabcd08-ac0a-4c18-a731-a665ab0961b7-0-00001.parquet     PARQUET          2832               84346
+----- orders$history -----
+              made_current_at        snapshot_id parent_id  is_current_ancestor
+2026-11-04 15:00:44.599+00:00 120723834449077482      None                 True
+----- EXPLAIN (TYPE DISTRIBUTED) - lignes cles -----
+Fragment 0 [HASH]
+          └─ RemoteSource[sourceFragmentIds = [1]]
+Fragment 1 [SOURCE]
+    └─ InnerJoin[criteria = (user_id = user_id_0), distribution = REPLICATED]
+       └─ LocalExchange[partitioning = SINGLE]
+          └─ RemoteSource[sourceFragmentIds = [2]]
+Fragment 2 [SOURCE]
+    TableScan[table = lakehouse:silver.users$data@5543598506819712309]
+----- EXPLAIN ANALYZE - lignes cles -----
+Fragment 1 [HASH]
+    CPU: 11.03ms, Scheduled: 11.19ms, Blocked 8.79s (Input: 4.40s, Output: 0.00ns), Input: 37 rows (592B); per task: avg.: 37.00 std.dev.: 0.00, Output: 37 rows
+    Peak Memory: 840B, Tasks count: 1; per task: max: 840B
+    │   CPU: 7.00ms (2.97%), Scheduled: 7.00ms (0.63%), Blocked: 0.00ns (0.00%), Output: 37 rows (592B)
+       │   CPU: 1.00ms (0.42%), Scheduled: 1.00ms (0.09%), Blocked: 4.40s (41.02%), Output: 37 rows (592B)
+       └─ RemoteSource[sourceFragmentIds = [2]]
+              CPU: 1.00ms (0.42%), Scheduled: 1.00ms (0.09%), Blocked: 4.40s (41.02%), Output: 37 rows (592B)
+Fragment 2 [SOURCE]
+    CPU: 212.23ms, Scheduled: 909.31ms, Blocked 1.92s (Input: 790.08ms, Output: 0.00ns), Input: 2882 rows (126.79kB); per task: avg.: 2882.00 std.dev.: 0.00, Ou
+    Peak Memory: 128.42kB, Tasks count: 1; per task: max: 128.42kB
+    │   CPU: 25.00ms (10.59%), Scheduled: 25.00ms (2.25%), Blocked: 0.00ns (0.00%), Output: 37 rows (592B)
+    └─ InnerJoin[criteria = (user_id = user_id_0), distribution = REPLICATED]
+       │   CPU: 84.00ms (35.59%), Scheduled: 416.00ms (37.48%), Blocked: 1.03s (9.60%), Output: 2832 rows (19.36kB)
+       │      CPU: 96.00ms (40.68%), Scheduled: 462.00ms (41.62%), Blocked: 0.00ns (0.00%), Output: 2832 rows (123.46kB)
+       │      Input: 2832 rows (124.45kB), Filtered: 0.00%, Physical input: 82.37kB, Physical input time: 56.15us, Splits: 1, Splits generation wait time: 735.2
+       └─ LocalExchange[partitioning = SINGLE]
+          │   CPU: 0.00ns (0.00%), Scheduled: 0.00ns (0.00%), Blocked: 107.00ms (1.00%), Output: 50 rows (2.34kB)
+          └─ RemoteSource[sourceFragmentIds = [3]]
+                 CPU: 3.00ms (1.27%), Scheduled: 3.00ms (0.27%), Blocked: 790.00ms (7.36%), Output: 50 rows (2.34kB)
+Fragment 3 [SOURCE]
+    CPU: 19.61ms, Scheduled: 195.07ms, Blocked 0.00ns (Input: 0.00ns, Output: 0.00ns), Input: 50 rows (2.54kB); per task: avg.: 50.00 std.dev.: 0.00, Output: 50
+    Peak Memory: 3.62kB, Tasks count: 1; per task: max: 3.62kB
+    TableScan[table = lakehouse:silver.users$data@5543598506819712309]
+        CPU: 19.00ms (8.05%), Scheduled: 195.00ms (17.57%), Blocked: 0.00ns (0.00%), Output: 50 rows (2.54kB)
+        Input: 50 rows (2.54kB), Physical input: 7.26kB, Physical input time: 29.29us, Splits: 1, Splits generation wait time: 298.05ms
+----- Historique des requetes -----
+                   query_id    state  elapsed_ms                                                          query
+20261104_212237_00014_hyzvx  RUNNING         -73 \n            SELECT query_id, state,\n                   date
+20261104_212233_00013_hyzvx FINISHED        4267 EXPLAIN ANALYZE \n        SELECT u.state, count(*) AS orders\n
+20261104_212231_00012_hyzvx FINISHED        1478  EXPLAIN (TYPE DISTRIBUTED) \n        SELECT u.state, count(*)
+20261104_212230_00011_hyzvx FINISHED         589                SELECT * FROM lakehouse.silver."orders$history"
+20261104_212229_00010_hyzvx FINISHED        1173  \n        SELECT file_path, file_format, record_count, file_s
+===== GOLD =====
+----- Schemas apres CREATE SCHEMA -----
+            Schema
+              gold
+information_schema
+            silver
+            system
+----- CTAS orders_by_state_month (lignes ecrites) -----
+ rows
+   50
+----- orders_by_state_month -----
+state                     month  orders  units  buyers
+   AL 2020-01-01 00:00:00+00:00      65    199       1
+   AP 2020-01-01 00:00:00+00:00      17     49       1
+   AS 2020-01-01 00:00:00+00:00      12     40       1
+   CO 2020-01-01 00:00:00+00:00      17     43       1
+   FM 2020-01-01 00:00:00+00:00      66    200       1
+   GA 2020-01-01 00:00:00+00:00       4     12       1
+   IN 2020-01-01 00:00:00+00:00      49    175       1
+   KY 2020-01-01 00:00:00+00:00      83    256       1
+   MH 2020-01-01 00:00:00+00:00      21     57       1
+   NE 2020-01-01 00:00:00+00:00      11     30       1
+----- CTAS top_products -----
+ rows
+    6
+----- top_products -----
+  product  orders  units  units_rank
+croissant     491   1523           1
+    drink     484   1493           2
+    bread     459   1425           3
+  brioche     468   1424           4
+    donut     462   1390           5
+   cookie     468   1371           6
+----- CTAS user_activity -----
+ rows
+   50
+----- user_activity -----
+                             user_id state  age  orders  units                   first_order_at                    last_order_at
+2051acef-097a-4e10-b6fe-bc0e7ecddbaf    VI    9     100    301 2020-03-13 06:21:16.892555+00:00 2020-03-17 09:02:08.476647+00:00
+9793b9b4-1374-4146-b2c5-bd89b70b3420    HI   65     100    289 2020-02-06 22:28:23.377915+00:00 2020-02-11 01:57:32.773432+00:00
+8d605936-0380-4b70-8d03-c91e4f8d5238    WA   76      99    280 2020-03-06 12:42:24.432345+00:00 2020-03-10 14:46:03.127489+00:00
+72bb912d-7da6-4785-b63b-4dc3a559e463    NJ   74      97    317 2020-02-15 03:39:36.282921+00:00 2020-02-19 03:23:18.610446+00:00
+52828d80-44b5-41f7-97ac-6aa8bb2488a3    IA   35      97    303 2020-02-11 02:16:02.488268+00:00 2020-02-15 02:18:44.854831+00:00
+97fa7f04-8363-4007-9cae-9610c72c1fe3    AP   52      92    285 2020-03-27 11:09:51.257559+00:00 2020-03-31 06:01:03.068375+00:00
+0dde29a6-baa4-471a-9d24-67ac778eedb3    VI   85      92    285 2020-01-08 11:20:45.094193+00:00 2020-01-12 06:23:02.514874+00:00
+90164161-cfa7-41cd-a631-d00b26d794d3    CA   82      92    274 2020-02-22 14:30:47.467747+00:00 2020-02-26 08:13:22.890319+00:00
+832920b7-c143-4426-b72f-871a45ee432d    HI   51      91    272 2020-04-08 18:29:41.913897+00:00 2020-04-12 12:41:22.197741+00:00
+d045dd1c-6684-49e3-b1f8-343ea99f1318    UT   33      86    256 2020-03-02 22:15:57.890701+00:00 2020-03-06 11:03:10.312652+00:00
+----- Tables gold -----
+                Table
+orders_by_state_month
+         top_products
+        user_activity
+----- top_products$files -----
+                                                                                                                                                                file_path  record_count  file_size_in_bytes
+s3://user-k-mohamedtelmidy-ece/warehouse/gold/top_products-831f3d67a8854959a81ded7b600262d9/data/20261104_212254_00019_hyzvx-99f67d52-9ddf-4e0d-8838-806b60b439c5.parquet             6                 795
+===== VALIDATION =====
+OK  silver_units == gold_units (orders_by_state_month): 8626 vs 8626
+OK  silver_units == product_units (top_products): 8626 vs 8626
+OK  silver_users == gold_users (user_activity): 50 vs 50
+OK  silver_orders == gold_orders (user_activity): 2832 vs 2832
+===== REFRESH top_products =====
+----- top_products$snapshots -----
+        snapshot_id                  committed_at operation
+4997647913246576239 2026-11-04 21:22:58.297+00:00    append
+4713891378024981654 2026-11-04 21:23:18.523+00:00    delete
+3801996950430947997 2026-11-04 21:23:21.863+00:00    append
+----- Time travel : premier snapshot -----
+ products
+        6
+----- Etat courant -----
+ products
+        6
