@@ -9,3 +9,4 @@ target/
 dbt_packages/
 logs/
 *.duckdb
+lab09_polaris/deployment/charts/
