@@ -1,0 +1,53 @@
+catalog role silver_reader : HTTP 201 (409 = existe deja)
+grant NAMESPACE_LIST sur silver : HTTP 201
+grant NAMESPACE_READ_PROPERTIES sur silver : HTTP 201
+grant TABLE_LIST sur silver : HTTP 201
+grant TABLE_READ_PROPERTIES sur silver : HTTP 201
+grant TABLE_READ_DATA sur silver : HTTP 201
+principal role silver_data_analyst : HTTP 201
+silver_reader -> silver_data_analyst : HTTP 201
+principal silver_reader : HTTP 201
+Credential ajoute dans /home/onyxia/.polaris-credentials.env
+silver_data_analyst -> silver_reader : HTTP 201
+
+Grants de silver_reader :
+{
+  "grants": [
+    {
+      "namespace": [
+        "silver"
+      ],
+      "privilege": "NAMESPACE_LIST",
+      "type": "namespace"
+    },
+    {
+      "namespace": [
+        "silver"
+      ],
+      "privilege": "NAMESPACE_READ_PROPERTIES",
+      "type": "namespace"
+    },
+    {
+      "namespace": [
+        "silver"
+      ],
+      "privilege": "TABLE_LIST",
+      "type": "namespace"
+    },
+    {
+      "namespace": [
+        "silver"
+      ],
+      "privilege": "TABLE_READ_PROPERTIES",
+      "type": "namespace"
+    },
+    {
+      "namespace": [
+        "silver"
+      ],
+      "privilege": "TABLE_READ_DATA",
+      "type": "namespace"
+    }
+  ]
+}
+>> Recharge l'env : source lab09_polaris/env.sh

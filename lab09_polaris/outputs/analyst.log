@@ -1,0 +1,43 @@
+org.apache.iceberg#iceberg-spark-runtime-4.1_2.13 added as a dependency
+	org.apache.iceberg#iceberg-spark-runtime-4.1_2.13;1.11.0 from central in [default]
+	---------------------------------------------------------------------
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[Stage 0:>                                                          (0 + 1) / 1][Stage 0:===========================================================(1 + 0) / 1]                                                                                [Stage 5:>                                                          (0 + 1) / 1]                                                                                15:03:18.023 [Thread-4] ERROR org.apache.spark.sql.execution.datasources.v2.AppendDataExec - Data source write support IcebergBatchWrite(table=polaris.silver.orders, format=PARQUET) is aborting.
+15:03:18.110 [Thread-4] ERROR org.apache.spark.sql.execution.datasources.v2.AppendDataExec - Data source write support IcebergBatchWrite(table=polaris.silver.orders, format=PARQUET) aborted.
+============================================================
+Polaris principal : analyst
+fs.s3.impl        : org.apache.hadoop.fs.s3a.S3AFileSystem
+============================================================
+----- Lectures en tant qu'analyst -----
++---------+---------+-----------+
+|namespace|tableName|isTemporary|
++---------+---------+-----------+
+|   silver|    users|      false|
+|   silver|   orders|      false|
++---------+---------+-----------+
++---------+---+
+|  product|  n|
++---------+---+
+|    donut|462|
+|   cookie|468|
+|croissant|491|
+|    bread|459|
+|  brioche|468|
+|    drink|484|
++---------+---+
+----- Ecritures en tant qu'analyst (doivent echouer : Forbidden) -----
+> INSERT INTO polaris.silver.orders SELECT * FROM polaris.silver.orders LIMIT 1
+  Refuse comme prevu (Py4JJavaError) :
+  An error occurred while calling o93.sql.
+  : org.apache.iceberg.exceptions.ForbiddenException: Forbidden: Principal 'analyst' with activated PrincipalRoles '[data_analyst]' and activated grants via '[data_analyst, catalog_reader]' is not authorized for op ADD_TABLE_SNAPSHOT
+  	at org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)
+  	at org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)
+> ALTER TABLE polaris.silver.users ADD COLUMN phone STRING
+  Refuse comme prevu (Py4JJavaError) :
+  An error occurred while calling o93.sql.
+  : org.apache.iceberg.exceptions.ForbiddenException: Forbidden: Principal 'analyst' with activated PrincipalRoles '[data_analyst]' and activated grants via '[data_analyst, catalog_reader]' is not authorized for op ADD_TABLE_SCHEMA
+  	at org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)
+  	at org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)

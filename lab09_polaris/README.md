@@ -131,3 +131,21 @@ C'est le principe du moindre privilège appliqué aux couches médaillon : un da
 ## Nettoyage
 
 Le mode `cleanup` supprime `polaris.silver.users`, la table de test et le namespace `gold`. `silver.orders` reste enregistrée, car le lab Trino la lit via Polaris.
+
+## Résultats obtenus (exécution du 4 novembre 2026)
+
+Sorties complètes dans `outputs/` (une par étape de `run_polaris.py`, plus `exercise2_setup.log`).
+
+| Étape | Résultat |
+|---|---|
+| `dev` | `silver.orders` enregistrée via `warehouse/silver/orders/metadata/v1.metadata.json` : **2 832** commandes lues via Polaris. `silver.users` créée par Polaris dans `warehouse/silver/users` : **52** utilisateurs. Colonne `country` ajoutée, nouveau fichier `0000N-<uuid>.metadata.json` |
+| `analyst` | Lectures OK. `INSERT` et `ALTER TABLE` refusés : `ForbiddenException: Principal 'analyst' ...` (2/2) |
+| `snapshots` | Aucun nouveau snapshot sur `silver.orders` après l'INSERT refusé |
+| `exercise1` | `DROP COLUMN country` : schéma modifié, liste des snapshots inchangée |
+| `gold` + `exercise2_silver_reader.sh` | Namespace `gold` créé. Rôle `silver_reader` et ses grants namespace créés (10 appels API en 2xx) |
+| `silver_reader` | Lecture `silver` OK. `SHOW TABLES IN gold`, `SELECT` sur gold et `INSERT` sur silver refusés : `ForbiddenException: Principal 'silver_reader' ...` (3/3) |
+| `cleanup` | Il ne reste que `silver.orders` dans le catalogue Polaris, pour le lab Trino |
+
+Remarques d'exécution :
+- Les tables du lab 8 étaient dans le warehouse local. Le mode `dev` les a copiées dans `s3a://<bucket>/warehouse` avant l'enregistrement.
+- Les credentials S3 temporaires d'Onyxia avaient expiré. Après rafraîchissement du profil `default`, le secret `polaris-s3` a été recréé et Polaris redémarré (`kubectl rollout restart deployment/polaris`).

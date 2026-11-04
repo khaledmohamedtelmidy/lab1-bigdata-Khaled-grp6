@@ -1,0 +1,40 @@
+org.apache.iceberg#iceberg-spark-runtime-4.1_2.13 added as a dependency
+	org.apache.iceberg#iceberg-spark-runtime-4.1_2.13;1.11.0 from central in [default]
+	---------------------------------------------------------------------
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[Stage 0:>                                                          (0 + 1) / 1]                                                                                ============================================================
+Polaris principal : dev
+fs.s3.impl        : org.apache.hadoop.fs.s3a.S3AFileSystem
+============================================================
+----- Exercice 1 : DROP COLUMN country -----
++-------------------+---------+-----------------------+
+|snapshot_id        |operation|committed_at           |
++-------------------+---------+-----------------------+
+|7624098065744937417|overwrite|2026-11-04 15:01:28.382|
++-------------------+---------+-----------------------+
++---------+---------+-------+
+| col_name|data_type|comment|
++---------+---------+-------+
+|  user_id|   string|   NULL|
+| username|   string|   NULL|
+|     name|   string|   NULL|
+|      sex|   string|   NULL|
+|    email|   string|   NULL|
+|birthdate|     date|   NULL|
++---------+---------+-------+
+Snapshots apres le DROP COLUMN (aucun nouveau snapshot attendu) :
++-------------------+---------+-----------------------+
+|snapshot_id        |operation|committed_at           |
++-------------------+---------+-----------------------+
+|7624098065744937417|overwrite|2026-11-04 15:01:28.382|
++-------------------+---------+-----------------------+
+Fichiers metadata (un nouveau fichier par changement de schema) :
++-----------------------+-----------------------------------------------------------------------------------------------------------------------+----------------+
+|timestamp              |file                                                                                                                   |latest_schema_id|
++-----------------------+-----------------------------------------------------------------------------------------------------------------------+----------------+
+|2026-11-04 15:01:29.478|s3://user-k-mohamedtelmidy-ece/warehouse/silver/users/metadata/00000-861ca02d-3e95-456c-9643-9986f4560b31.metadata.json|0               |
+|2026-11-04 15:04:08.38 |s3://user-k-mohamedtelmidy-ece/warehouse/silver/users/metadata/00001-25e5f7d8-5a90-4f4e-bce2-ee0afebb5891.metadata.json|0               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------+----------------+

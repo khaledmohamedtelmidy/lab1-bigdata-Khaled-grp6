@@ -113,11 +113,11 @@ def ensure_lab_tables_in_s3(spark: SparkSession) -> None:
 
 
 def mode_dev(spark: SparkSession) -> None:
+    ensure_lab_tables_in_s3(spark)
+
     title("Catalogues joignables")
     spark.sql("SHOW NAMESPACES IN lab").show()
     spark.sql("SHOW NAMESPACES IN polaris").show()
-
-    ensure_lab_tables_in_s3(spark)
 
     title("Enregistrement de silver.orders dans Polaris")
     spark.sql("CREATE NAMESPACE IF NOT EXISTS polaris.silver")

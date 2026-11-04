@@ -1,0 +1,70 @@
+org.apache.iceberg#iceberg-spark-runtime-4.1_2.13 added as a dependency
+	org.apache.iceberg#iceberg-spark-runtime-4.1_2.13;1.11.0 from central in [default]
+	---------------------------------------------------------------------
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[Stage 1:>                                                          (0 + 1) / 1]                                                                                [Stage 2:>                                                          (0 + 1) / 1]                                                                                ============================================================
+Polaris principal : dev
+fs.s3.impl        : org.apache.hadoop.fs.s3a.S3AFileSystem
+============================================================
+lab.silver.orders absent du bucket : copie depuis local.silver.orders
+lab.silver.users absent du bucket : copie depuis local.silver.users
+----- Catalogues joignables -----
++---------+
+|namespace|
++---------+
+|   silver|
++---------+
++---------+
+|namespace|
++---------+
++---------+
+----- Enregistrement de silver.orders dans Polaris -----
+Fichier metadata courant : s3a://user-k-mohamedtelmidy-ece/warehouse/silver/orders/metadata/v1.metadata.json
++-------------------+-------------------+----------------------+
+|current_snapshot_id|total_records_count|total_data_files_count|
++-------------------+-------------------+----------------------+
+|120723834449077482 |2832               |1                     |
++-------------------+-------------------+----------------------+
++------+
+|orders|
++------+
+|  2832|
++------+
+----- Tables et snapshots via Polaris -----
++---------+---------+-----------+
+|namespace|tableName|isTemporary|
++---------+---------+-----------+
+|   silver|   orders|      false|
++---------+---------+-----------+
++------------------+---------+-----------------------+
+|snapshot_id       |operation|committed_at           |
++------------------+---------+-----------------------+
+|120723834449077482|append   |2026-11-04 15:00:44.599|
++------------------+---------+-----------------------+
+----- Creation de polaris.silver.users (geree par Polaris) -----
++-----+
+|users|
++-----+
+|   52|
++-----+
+Location : s3://user-k-mohamedtelmidy-ece/warehouse/silver/users
+----- Evolution de schema : ADD COLUMN country -----
++---------+---------+-------+
+| col_name|data_type|comment|
++---------+---------+-------+
+|  user_id|   string|   NULL|
+| username|   string|   NULL|
+|     name|   string|   NULL|
+|      sex|   string|   NULL|
+|    email|   string|   NULL|
+|birthdate|     date|   NULL|
+|  country|   string|   NULL|
++---------+---------+-------+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------+
+|timestamp              |file                                                                                                                   |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------+
+|2026-11-04 15:01:29.478|s3://user-k-mohamedtelmidy-ece/warehouse/silver/users/metadata/00000-861ca02d-3e95-456c-9643-9986f4560b31.metadata.json|
++-----------------------+-----------------------------------------------------------------------------------------------------------------------+

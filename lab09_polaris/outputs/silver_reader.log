@@ -1,0 +1,46 @@
+org.apache.iceberg#iceberg-spark-runtime-4.1_2.13 added as a dependency
+	org.apache.iceberg#iceberg-spark-runtime-4.1_2.13;1.11.0 from central in [default]
+	---------------------------------------------------------------------
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+[Stage 0:>                                                          (0 + 1) / 1][Stage 0:===========================================================(1 + 0) / 1]                                                                                [Stage 3:>                                                          (0 + 1) / 1][Stage 5:>                                                          (0 + 1) / 1]                                                                                15:05:14.944 [Thread-4] ERROR org.apache.spark.sql.execution.datasources.v2.AppendDataExec - Data source write support IcebergBatchWrite(table=polaris.silver.orders, format=PARQUET) is aborting.
+15:05:15.032 [Thread-4] ERROR org.apache.spark.sql.execution.datasources.v2.AppendDataExec - Data source write support IcebergBatchWrite(table=polaris.silver.orders, format=PARQUET) aborted.
+============================================================
+Polaris principal : silver_reader
+fs.s3.impl        : org.apache.hadoop.fs.s3a.S3AFileSystem
+============================================================
+----- Exercice 2 : principal silver_reader -----
+Lecture silver (doit reussir) :
++---------+---------+-----------+
+|namespace|tableName|isTemporary|
++---------+---------+-----------+
+|   silver|    users|      false|
+|   silver|   orders|      false|
++---------+---------+-----------+
++------+
+|orders|
++------+
+|  2832|
++------+
+Lecture gold (doit echouer) :
+> SHOW TABLES IN polaris.gold
+  Refuse comme prevu (Py4JJavaError) :
+  An error occurred while calling o93.sql.
+  : org.apache.iceberg.exceptions.ForbiddenException: Forbidden: Principal 'silver_reader' with activated PrincipalRoles '[silver_data_analyst]' and activated grants via '[silver_data_analyst, silver_reader]' is not authorized for op LIST_TABLES
+  	at org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)
+  	at org.apache.iceberg.rest.ErrorHandlers$NamespaceErrorHandler.accept(ErrorHandlers.java:285)
+> SELECT * FROM polaris.gold.orders_by_product
+  Refuse comme prevu (Py4JJavaError) :
+  An error occurred while calling o93.sql.
+  : org.apache.iceberg.exceptions.ForbiddenException: Forbidden: Principal 'silver_reader' with activated PrincipalRoles '[silver_data_analyst]' and activated grants via '[silver_data_analyst, silver_reader]' is not authorized for op LOAD_TABLE
+  	at org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)
+  	at org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:160)
+Ecriture silver (doit echouer) :
+> INSERT INTO polaris.silver.orders SELECT * FROM polaris.silver.orders LIMIT 1
+  Refuse comme prevu (Py4JJavaError) :
+  An error occurred while calling o93.sql.
+  : org.apache.iceberg.exceptions.ForbiddenException: Forbidden: Principal 'silver_reader' with activated PrincipalRoles '[silver_data_analyst]' and activated grants via '[silver_data_analyst, silver_reader]' is not authorized for op ADD_TABLE_SNAPSHOT
+  	at org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)
+  	at org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)

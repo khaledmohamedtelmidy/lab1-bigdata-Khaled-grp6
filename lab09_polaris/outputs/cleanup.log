@@ -1,0 +1,18 @@
+org.apache.iceberg#iceberg-spark-runtime-4.1_2.13 added as a dependency
+	org.apache.iceberg#iceberg-spark-runtime-4.1_2.13;1.11.0 from central in [default]
+	---------------------------------------------------------------------
+	|       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+	---------------------------------------------------------------------
+	|      default     |   1   |   0   |   0   |   0   ||   1   |   0   |
+	---------------------------------------------------------------------
+============================================================
+Polaris principal : dev
+fs.s3.impl        : org.apache.hadoop.fs.s3a.S3AFileSystem
+============================================================
+----- Nettoyage -----
++---------+---------+-----------+
+|namespace|tableName|isTemporary|
++---------+---------+-----------+
+|   silver|   orders|      false|
++---------+---------+-----------+
+silver.orders reste enregistree : le lab Trino en a besoin.
